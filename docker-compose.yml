@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  # Define the MongoDB service
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"   # Expose MongoDB on port 27017
+    volumes:
+      - mongodb_data:/data/db  # Persistent data storage
+
+  # Define the Express app service
+  express-app:
+    build: .
+    container_name: express-app
+    restart: always
+    ports:
+      - "3000:3000"  # Expose your Express app on port 3000
+    depends_on:
+      - mongodb  # Wait for MongoDB to be ready
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/easy-notes  # Connection string for MongoDB
+    volumes:
+      - .:/app  # Mount current directory to /app inside the container
+
+volumes:
+  mongodb_data:
